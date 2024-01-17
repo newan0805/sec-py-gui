@@ -136,23 +136,37 @@ window.geometry('925x500+300+200')
 window.configure(bg='#fff')
 window.resizable(False, False)
 window.attributes("-alpha", 0.9)
+# window.overrideredirect(1)
 
 close_image = Image.open("./assets/icons/close_white.png")
 close_image = ImageTk.PhotoImage(close_image)
 
 eye_open_image = Image.open("./assets/icons/view.png")
-eye_open_image = ImageTk.PhotoImage(eye_open_image)
+eye_open_image = ImageTk.PhotoImage(eye_open_image) 
 
 eye_closed_image = Image.open("./assets/icons/hide.png")
 eye_closed_image = ImageTk.PhotoImage(eye_closed_image)
 
-close_button = Label(window, image=close_image, bg="white", cursor="hand2")
-close_button.pack(side="top", anchor="ne", padx=5, pady=5)
-close_button.bind("<Button-1>", lambda e: close_window())
+title_bar = Frame(window, bg='white', relief='raised', bd=2, width=350, height=3)
+# title_bar.pack(fill=X)
 
-img = Image.open("./assets/peakpx.png")
+# close_button = Button(title_bar, text='X', command=close_window)
+# close_button.pack(side=RIGHT)
+# close_button = Button(title_bar, image=close_image, command=close_window)
+close_button = Button(title_bar,  command=close_window)
+# close_button.pack(side=RIGHT)
+
+bg_img = Image.open("./assets/peakpx.png")
+# bg_img = bg_img.resize((300, 200), Image.LANCZOS)
+bg_img = ImageTk.PhotoImage(bg_img)
+Label(window, image=bg_img).pack()
+
+img = Image.open("./assets/signup.png")
+# img = ImageTk.PhotoImage(img)
+img = img.resize((300, 200), Image.LANCZOS)
 img = ImageTk.PhotoImage(img)
-Label(window, image=img, border=0, bg='white').place(x=0, y=0)
+img = img.pack()
+Label(window, image=img, border=0, bg='white').place(x=110, y=110)
 
 frame = Frame(window, width=350, height=390, bg='white')
 frame.place(x=480, y=50)
