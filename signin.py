@@ -1,37 +1,46 @@
 from tkinter import *
 from tkinter import messagebox
 import ast
+import json
 import hashlib
 import re
 import random
 from captcha.image import ImageCaptcha
 from PIL import ImageTk,Image
-import io
+import smtplib
+import ssl
+from email.message import EmailMessage
 
 def SignIn():
+    def send_otp_email(receiver_email, otp):
+        sender_email = "newan2003test@gmail.com"  # Replace with your email
+        sender_password = "Newan@071"  # Replace with your email password
+
+        message = f"Subject: OTP for SignUp\n\nYour OTP is: {otp}"
+
+        try:
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+                server.login(sender_email, sender_password)
+                server.sendmail(sender_email, receiver_email, message)
+
+            print("OTP sent successfully!")
+        except Exception as e:
+            print(f"Error sending OTP: {e}")
+    
     def hash_password(password):
         return hashlib.sha256(password.encode()).hexdigest()
 
     def is_strong_password(password):
         if len(password) < 8:
             return False
-
-        # Contains at least one lowercase letter
         if not re.search("[a-z]", password):
             return False
-
-        # Contains at least one uppercase letter
         if not re.search("[A-Z]", password):
             return False
-
-        # Contains at least one digit
         if not re.search("[0-9]", password):
             return False
-
-        # Contains at least one special character
         if not re.search("[!@#$%^&*(),.?\":{}|<>]", password):
             return False
-
         return True
 
     def generate_captcha():
@@ -55,16 +64,13 @@ def SignIn():
 
         out_path = "./captcha.png"
 
-        # Generate the image captcha
         image = ImageCaptcha(width=280, height=90)
         data = image.generate(expected_captcha)
         image.write(expected_captcha, out_path)
 
-        # Load the saved captcha image using PIL
         captcha_img = Image.open(out_path)
         captcha_img = ImageTk.PhotoImage(captcha_img)
 
-        # Display the image in a Label
         captcha_image_label = Label(captcha_window, image=captcha_img)
         captcha_image_label.image = captcha_img
         captcha_image_label.pack()
@@ -95,7 +101,6 @@ def SignIn():
 
         if password == confirm_password and is_strong_password(password):
             try:
-                # Read existing user data or initialize an empty dictionary
                 with open('datasheet.txt', 'r') as file:
                     data = file.read().strip()
                     if data:
@@ -104,18 +109,12 @@ def SignIn():
                     else:
                         user_data = {}
 
-                # Add the new user data
                 user_data[username] = hash_password(password)
-
-                # Generate CAPTCHA
                 captcha = generate_captcha()
-
-                # Open CAPTCHA window
                 open_captcha_window(captcha, username, password)
 
             except Exception as e:
                 print(f"Error during signup: {e}")
-                # Handle file-related errors
 
         else:
             if password != confirm_password:
@@ -123,22 +122,15 @@ def SignIn():
             else:
                 messagebox.showerror('Invalid', 'Please create a stronger password')
 
-    import json
-
     def record_user(username, password):
         try:
-            # Read existing user data or initialize an empty dictionary
             with open('datasheet.txt', 'r') as file:
                 data = file.read().strip()
                 if data:
                     user_data = json.loads(data)
                 else:
                     user_data = {}
-
-            # Add the new user data
             user_data[username] = (password)
-
-            # Write the updated user data back to the file
             with open('datasheet.txt', 'w') as file:
                 file.write(json.dumps(user_data))
 
@@ -217,3 +209,4 @@ def SignIn():
     signin.place(x=200, y=340)
 
     window.mainloop()
+    

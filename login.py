@@ -13,8 +13,9 @@ def Login():
         password = password_var.get()
 
         if username == 'admin' and hash_password(password) == hash_password('1234'):
-            messagebox.showinfo('Login Successful', 'Welcome, Admin!')
-            open_new_window()  
+            messagebox.showinfo('Login Successful', 'Welcome, f{username}!')
+            return 'success'
+            # open_new_window()  
         else:
             messagebox.showerror('Login Failed', 'Invalid username or password')
 
